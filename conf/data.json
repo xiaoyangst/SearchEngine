@@ -1,0 +1,6 @@
+{
+  "en_stop": "sources/project/stop/stop_words_eng.txt",
+  "cn_stop": "sources/project/stop/stop_words_zh.txt",
+  "en_corpus": "sources/project/corpus/en",
+  "cn_corpus": "sources/project/corpus/cd"
+}
