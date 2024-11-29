@@ -4,9 +4,10 @@
 #include "json.hpp"
 
 using json = nlohmann::json;
+using Words = std::vector<std::string>;
 
 SplitChinese::SplitChinese(std::string stop_path, std::string json_path)
-    : m_stop_path(std::move(stop_path)), m_json_path(std::move(json_path)) {
+    : SplitTool(std::move(stop_path)), m_json_path(std::move(json_path)) {
   std::ifstream json_ifs(m_json_path);
   if (!json_ifs.is_open()) {
     std::cerr << "open jieba json file failed" << std::endl;
@@ -31,6 +32,7 @@ SplitChinese::SplitChinese(std::string stop_path, std::string json_path)
   // 加载停用词
   std::string line;
   while (getline(stop_ifs, line)) {
+    //std::cout<<line<<" ";
     m_stop_words.insert(line);
   }
 }
@@ -40,19 +42,16 @@ std::vector<std::string> SplitChinese::splitWords(std::string &sentence) {
   return m_jieba->splitWords(sentence);
 }
 
-std::string SplitChinese::rmStopWords(std::string &sentence) {
-    std::vector<std::string> words = splitWords(sentence);
-    std::string res;
-    for (auto word : words) {
-      if (word == " ") continue;
-      if (m_stop_words.find(word) == m_stop_words.end()) {
-        if (!res.empty()) {
-          res += " " + word;
-        } else{
-          res += word;
-        }
-      }
+Words SplitChinese::rmStopWords(std::string &sentence) {
+  Words words = splitWords(sentence);
+  Words res;
+  for (auto &word : words) {
+    if (word == " ") continue;
+    if (m_stop_words.find(word) == m_stop_words.end()) {
+      //std::cout << word << " ";
+      res.push_back(word);
     }
+  }
   return res;
 }
 void SplitChinese::rinse(std::string &sentence) {

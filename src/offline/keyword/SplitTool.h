@@ -14,11 +14,13 @@
 #include <vector>
 class SplitTool {
   using Words = std::vector<std::string>;
- protected:
-  SplitTool() = default;
+ public:
+  explicit SplitTool(std::string stop_path);
   virtual ~SplitTool() = default;
-  virtual std::string rmStopWords(std::string& sentence) = 0;  // 去除停用词
+  virtual Words rmStopWords(std::string& sentence) = 0;  // 去除停用词
   virtual void rinse(std::string &sentence) = 0;  // 清洗
+ protected:
+  std::string m_stop_path;  // 停用词路径
 };
 
 #endif //SEARCHENGINE_SRC_OFFLINE_KEYWORD_SPLITTOOL_H_

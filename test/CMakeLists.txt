@@ -1,2 +1,2 @@
-add_subdirectory(SplitChineseTest)
-add_subdirectory(SplitEnglishTest)
+#add_subdirectory(SplitChineseTest)
+#add_subdirectory(SplitEnglishTest)

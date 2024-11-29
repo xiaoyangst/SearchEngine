@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 17)
 aux_source_directory(. KEY_WORD_SRC_LIST)
 
 add_executable(BuildKeyWord ${KEY_WORD_SRC_LIST} main.cpp)
-target_link_libraries(BuildKeyWord)
+target_link_libraries(BuildKeyWord pthread)

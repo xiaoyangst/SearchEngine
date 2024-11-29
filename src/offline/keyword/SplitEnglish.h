@@ -22,9 +22,8 @@ class SplitEnglish : public SplitTool {
  private:
   void rinse(std::string &sentence) override; // 清洗
  public:
-  std::string rmStopWords(std::string &sentence) override;  // 去除停用词
+  Words rmStopWords(std::string &sentence) override;  // 去除停用词
  private:
-  std::string m_stop_path;  // 停用词路径
   std::unordered_set<std::string> m_stop_words; // 方便查询，在构造函数中初始化
 };
 

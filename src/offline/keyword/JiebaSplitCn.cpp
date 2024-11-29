@@ -11,6 +11,6 @@ JiebaSplitCn::JiebaSplitCn(const std::string &dictPath,
 }
 JiebaSplitCn::Words JiebaSplitCn::splitWords(const std::string &sentence) {
   std::vector<std::string> words;
-  m_jieba->Cut(sentence, words, true);
+  m_jieba->CutAll(sentence, words);
   return words;
 }

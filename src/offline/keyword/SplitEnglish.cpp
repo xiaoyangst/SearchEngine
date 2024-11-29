@@ -3,7 +3,10 @@
 #include <iostream>
 #include <sstream>
 #include "SplitEnglish.h"
-SplitEnglish::SplitEnglish(std::string stop_path) : m_stop_path(std::move(stop_path)) {
+using Words = std::vector<std::string>;
+
+SplitEnglish::SplitEnglish(std::string stop_path)
+    : SplitTool(std::move(stop_path)) {
   std::ifstream ifs(m_stop_path);
   if (!ifs.is_open()) {
     std::cerr << "open stop words file failed" << std::endl;
@@ -26,20 +29,14 @@ void SplitEnglish::rinse(std::string &sentence) {
   }
 }
 
-
-std::string SplitEnglish::rmStopWords(std::string &sentence) {
+Words SplitEnglish::rmStopWords(std::string &sentence) {
   rinse(sentence);
   std::stringstream ss(sentence);
   std::string word;
-  std::string new_sentence;
+  Words new_sentence;
   while (ss >> word) {
-    rinse(word);
     if (m_stop_words.find(word) == m_stop_words.end()) {  // 不是停用词
-      if (!new_sentence.empty()) {
-        new_sentence += " " + word;
-      }else{
-        new_sentence = word;
-      }
+      new_sentence.push_back(word);
     }
   }
   return new_sentence;
