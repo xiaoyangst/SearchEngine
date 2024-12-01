@@ -9,18 +9,6 @@ Dictionary::Dictionary(std::string src_path,std::string dict_path,std::shared_pt
   ,m_split_tool(std::move(split_tool))
 {}
 
-bool Dictionary::CreateDictionary() {
-  std::ofstream ofs(m_dict_path,std::ios::out);
-  if (!ofs.is_open()) {
-    std::cerr << "open file failed" << std::endl;
-    return false;
-  }
-  for (const auto &item : m_map) {
-    ofs << item.first << " " << item.second << std::endl;
-  }
-  return true;
-}
-
 bool Dictionary::buildMap() {
   std::ifstream ifs(m_src_path);
   if (!ifs.is_open()) {
@@ -36,3 +24,17 @@ bool Dictionary::buildMap() {
   }
   return true;
 }
+
+bool Dictionary::CreateDictionary() {
+  std::ofstream ofs(m_dict_path,std::ios::out);
+  if (!ofs.is_open()) {
+    std::cerr << "open file failed" << std::endl;
+    return false;
+  }
+  for (const auto &item : m_map) {
+    ofs << item.first << " " << item.second << std::endl;
+  }
+  return true;
+}
+
+

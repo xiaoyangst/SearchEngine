@@ -32,7 +32,6 @@ SplitChinese::SplitChinese(std::string stop_path, std::string json_path)
   // 加载停用词
   std::string line;
   while (getline(stop_ifs, line)) {
-    //std::cout<<line<<" ";
     m_stop_words.insert(line);
   }
 }

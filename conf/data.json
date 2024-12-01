@@ -2,5 +2,7 @@
   "en_stop": "sources/project/dict/stop_words.utf8",
   "cn_stop": "sources/project/dict/stop_words.utf8",
   "en_corpus": "sources/project/corpus/en",
-  "cn_corpus": "sources/project/corpus/cd"
+  "cn_corpus": "sources/project/corpus/cd",
+  "en_build_dict": "data/en_dict.dat",
+  "cn_build_dict": "data/cn_dict.dat"
 }
