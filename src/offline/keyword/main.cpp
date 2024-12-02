@@ -1,10 +1,15 @@
-#include "json.hpp"
-#include "Dictionary.h"
-#include "SplitEnglish.h"
-#include "SplitChinese.h"
-#include "InvertIndex.h"
+#include "KeyWordProducer.h"
+#include <string>
+int main(){
 
+  std::string path = "conf/data.json";
+  KeyWordProducer key(path);
+  key.start();
 
+  return 0;
+}
+
+/*
 int main() {
 
 
@@ -45,3 +50,4 @@ int main() {
 
   return 0;
 }
+ */

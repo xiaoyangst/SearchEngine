@@ -1,32 +1,36 @@
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 #include "Dictionary.h"
 #include <utility>
 
-Dictionary::Dictionary(std::string src_path,std::string dict_path,std::shared_ptr<SplitTool> split_tool)
-  :m_src_path(std::move(src_path))
-  ,m_dict_path(std::move(dict_path))
-  ,m_split_tool(std::move(split_tool))
-{}
+Dictionary::Dictionary(std::string corpus_dir, std::string dict_path, std::shared_ptr<SplitTool> split_tool)
+    : m_corpus_dir(std::move(corpus_dir)), m_dict_path(std::move(dict_path)), m_split_tool(std::move(split_tool)) {}
 
 bool Dictionary::buildMap() {
-  std::ifstream ifs(m_src_path);
-  if (!ifs.is_open()) {
-    std::cerr << "open file failed" << std::endl;
-    return false;
-  }
-  std::string line;
-  while (getline(ifs, line)) {
-    auto words = m_split_tool->rmStopWords(line);
-    for (const auto& item : words){
-      m_map[item]++;
+  for (const auto &entry : std::filesystem::directory_iterator(m_corpus_dir)) {
+    if (entry.is_regular_file()) {
+      std::ifstream file(entry.path());
+      if (file.is_open()) {
+        std::string line;
+        while (getline(file, line)) {
+          auto words = m_split_tool->rmStopWords(line);
+          for (const auto &item : words) {
+            m_map[item]++;
+          }
+        }
+        file.close();
+      } else {
+        std::cerr << "Failed to open file: " << entry.path() << std::endl;
+      }
     }
   }
+
   return true;
 }
 
 bool Dictionary::CreateDictionary() {
-  std::ofstream ofs(m_dict_path,std::ios::out);
+  std::ofstream ofs(m_dict_path, std::ios::out);
   if (!ofs.is_open()) {
     std::cerr << "open file failed" << std::endl;
     return false;

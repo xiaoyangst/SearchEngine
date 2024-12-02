@@ -16,12 +16,12 @@
 #include "SplitTool.h"
 class Dictionary {
  public:
-    explicit Dictionary(std::string src_path,std::string dict_path,std::shared_ptr<SplitTool> split_tool);
+    explicit Dictionary(std::string corpus_dir,std::string dict_path,std::shared_ptr<SplitTool> split_tool);
     virtual ~Dictionary() = default;
     virtual bool buildMap();  // 构建词典
     virtual bool CreateDictionary();  // 生成词典文件
  protected:
-  std::string m_src_path;
+  std::string m_corpus_dir;
   std::string m_dict_path;
   std::shared_ptr<SplitTool> m_split_tool;  // 分词工具
   std::unordered_map<std::string,unsigned int> m_map;
