@@ -1,3 +1,5 @@
+#include <fstream>
+#include <iostream>
 #include "KeyWordProducer.h"
 #include "json.hpp"
 using json = nlohmann::json;

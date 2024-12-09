@@ -3,7 +3,7 @@
   * @file           : JiebaSplitCn.h
   * @author         : xy
   * @brief          : jieba 操作的封装
-  * @attention      : 先调用 initJieba，再调用 getInstance 获取单例，就可以使用 splitWords 了
+  * @attention      : None
   * @date           : 2024/11/27
   ******************************************************************************
   */
@@ -12,9 +12,8 @@
 #define SEARCHENGINE_SRC_OFFLINE_KEYWORD_JIEBASPLITCN_H_
 #include <string>
 #include <vector>
-#include "Singleton.h"
 #include "json.hpp"
-#include "Jieba.hpp"
+#include "cppjieba/Jieba.hpp"
 using json = nlohmann::json;
 class JiebaSplitCn {
   using Words = std::vector<std::string>;

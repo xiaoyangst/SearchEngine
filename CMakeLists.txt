@@ -3,11 +3,6 @@ project(SearchEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(utils)
-include_directories(thirdpart)
-include_directories(thirdpart/cppjieba)
-include_directories(thirdpart/cppjieba/limonp)
-
 find_package(GTest REQUIRED)
 
 add_subdirectory(src)

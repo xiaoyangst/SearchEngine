@@ -13,7 +13,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include "SplitTool.h"
+#include "utils/splitword/SplitTool.h"
 class Dictionary {
  public:
     explicit Dictionary(std::string corpus_dir,std::string dict_path,std::shared_ptr<SplitTool> split_tool);

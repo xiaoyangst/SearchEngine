@@ -10,8 +10,8 @@
 
 #ifndef SEARCHENGINE_SRC_OFFLINE_KEYWORD_KEYWORDPRODUCER_H_
 #define SEARCHENGINE_SRC_OFFLINE_KEYWORD_KEYWORDPRODUCER_H_
-#include "SplitChinese.h"
-#include "SplitEnglish.h"
+#include "utils/splitword/SplitChinese.h"
+#include "utils/splitword/SplitEnglish.h"
 #include "Dictionary.h"
 #include "InvertIndex.h"
 class KeyWordProducer {

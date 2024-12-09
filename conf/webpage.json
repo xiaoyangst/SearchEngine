@@ -1,0 +1,6 @@
+{
+  "xml_path": "sources/project/page",
+  "webpage_dict": "data/webpage.dat",
+  "webpage_invert": "data/webpage_invert.dat",
+  "webpage_offset": "data/webpage_offset.dat"
+}

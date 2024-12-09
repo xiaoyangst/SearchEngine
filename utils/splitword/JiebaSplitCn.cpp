@@ -1,4 +1,5 @@
 #include "JiebaSplitCn.h"
+#include "cppjieba/Jieba.hpp"
 
 JiebaSplitCn::JiebaSplitCn(const std::string &dictPath,
                            const std::string &hmmPath,

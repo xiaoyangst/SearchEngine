@@ -1,0 +1,6 @@
+{
+  "dict": "sources/project/dict/jieba.dict.utf8",
+  "hmm": "sources/project/dict/hmm_model.utf8",
+  "idf": "sources/project/dict/idf.utf8",
+  "stop_words": "sources/project/dict/stop_words.utf8"
+}

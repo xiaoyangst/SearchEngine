@@ -22,9 +22,6 @@ class InvertIndex {
   virtual ~InvertIndex() = default;
   bool buildInvertIndex();  // 构建倒排索引
   bool createInvertIndex(); // 生成倒排索引文件
- private:
-  size_t nBytecode(const char ch);
-  Words splitString(const std::string &str);
  protected:
   std::string m_dict_path;  // 读取词典的路径
   std::string m_index_path; // 存放倒排索引文件的路径
