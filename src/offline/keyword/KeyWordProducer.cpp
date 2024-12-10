@@ -24,13 +24,13 @@ KeyWordProducer::KeyWordProducer(std::string path) : m_path(std::move(path)) {
   std::string jieba_json = json_parse["jieba_json"].get<std::string>();
 
   std::shared_ptr<SplitTool> en_split_tool = std::make_shared<SplitEnglish>(en_stop);
-  m_en_dictionary = std::make_shared<Dictionary>(en_corpus, en_dict, en_split_tool);
+  m_en_dictionary = std::make_unique<Dictionary>(en_corpus, en_dict, en_split_tool);
 
   std::shared_ptr<SplitTool> cn_split_tool = std::make_shared<SplitChinese>(cn_stop,jieba_json);
-  m_cn_dictionary = std::make_shared<Dictionary>(cn_corpus, cn_dict, cn_split_tool);
+  m_cn_dictionary = std::make_unique<Dictionary>(cn_corpus, cn_dict, cn_split_tool);
 
-  m_en_invertIndex = std::make_shared<InvertIndex>(en_dict, en_invert);
-  m_cn_invertIndex = std::make_shared<InvertIndex>(cn_dict, cn_invert);
+  m_en_invertIndex = std::make_unique<InvertIndex>(en_dict, en_invert);
+  m_cn_invertIndex = std::make_unique<InvertIndex>(cn_dict, cn_invert);
 }
 void KeyWordProducer::start() {
   buildEnglish();

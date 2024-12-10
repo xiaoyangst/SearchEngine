@@ -24,10 +24,10 @@ class KeyWordProducer {
   void buildChinese();
  private:
   std::string m_path;
-  std::shared_ptr<Dictionary> m_en_dictionary;
-  std::shared_ptr<Dictionary> m_cn_dictionary;
-  std::shared_ptr<InvertIndex> m_en_invertIndex;
-  std::shared_ptr<InvertIndex> m_cn_invertIndex;
+  std::unique_ptr<Dictionary> m_en_dictionary;
+  std::unique_ptr<Dictionary> m_cn_dictionary;
+  std::unique_ptr<InvertIndex> m_en_invertIndex;
+  std::unique_ptr<InvertIndex> m_cn_invertIndex;
 };
 
 #endif //SEARCHENGINE_SRC_OFFLINE_KEYWORD_KEYWORDPRODUCER_H_
