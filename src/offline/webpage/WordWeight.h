@@ -14,8 +14,9 @@
 #include <unordered_map>
 #include <cmath>
 #include <list>
+#include "utils/base/noncopyable.h"
 class WebPageInvert;
-class WordWeight {
+class WordWeight : public noncopyable{
   friend class WebPageInvert;
  private:
   struct WEIGHT {

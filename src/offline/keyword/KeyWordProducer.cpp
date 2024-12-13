@@ -26,7 +26,7 @@ KeyWordProducer::KeyWordProducer(std::string path) : m_path(std::move(path)) {
   std::shared_ptr<SplitTool> en_split_tool = std::make_shared<SplitEnglish>(en_stop);
   m_en_dictionary = std::make_unique<Dictionary>(en_corpus, en_dict, en_split_tool);
 
-  std::shared_ptr<SplitTool> cn_split_tool = std::make_shared<SplitChinese>(cn_stop,jieba_json);
+  std::shared_ptr<SplitTool> cn_split_tool = std::make_shared<SplitChinese>(cn_stop);
   m_cn_dictionary = std::make_unique<Dictionary>(cn_corpus, cn_dict, cn_split_tool);
 
   m_en_invertIndex = std::make_unique<InvertIndex>(en_dict, en_invert);

@@ -12,7 +12,8 @@
 #define SEARCHENGINE_SRC_OFFLINE_WEBPAGE_WEBPAGEOFFSET_H_
 #include <string>
 #include <map>
-class WebPageOffset {
+#include "utils/base/noncopyable.h"
+class WebPageOffset : public noncopyable{
  public:
   WebPageOffset(std::string webpage_dict,std::string dst);
   ~WebPageOffset() = default;

@@ -25,7 +25,7 @@ WebPageProducer::WebPageProducer(std::string path)
   m_web_page = std::make_unique<WebPage>(xml_path,webpage_dict);
   m_web_page_offset = std::make_unique<WebPageOffset>(webpage_dict,webpage_offset);
   m_web_page_remove = std::make_unique<WebPageRemove>(webpage_dict, webpage_offset, new_webpage_dict, new_webpage_offset,simhash_path);
-  m_split_chinese = std::make_shared<SplitChinese>(stop_word,jieba_json);
+  m_split_chinese = std::make_shared<SplitChinese>(stop_word);
   m_web_page_invert = std::make_unique<WebPageInvert>(webpage_invert, new_webpage_dict, new_webpage_offset, m_split_chinese);
 }
 void WebPageProducer::start() {

@@ -14,12 +14,13 @@
 #include <vector>
 #include "json.hpp"
 #include "cppjieba/Jieba.hpp"
+#include "utils/base/Singleton.h"
 using json = nlohmann::json;
-class JiebaSplitCn {
+class JiebaSplitCn : public Singleton<JiebaSplitCn> {
   using Words = std::vector<std::string>;
+  friend class Singleton<JiebaSplitCn>;
  public:
-  explicit JiebaSplitCn(const std::string& dictPath, const std::string& userDictPath, const std::string& hmmPath,
-                        const std::string& idfPath, const std::string& stopWordPath);
+  explicit JiebaSplitCn();
   ~JiebaSplitCn() = default;
   Words splitWords(const std::string &sentence);
  private:

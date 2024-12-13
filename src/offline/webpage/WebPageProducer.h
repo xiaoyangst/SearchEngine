@@ -16,7 +16,8 @@
 #include "WebPageRemove.h"
 #include "WebPageInvert.h"
 #include "utils/splitword/SplitChinese.h"
-class WebPageProducer {
+#include "utils/base/noncopyable.h"
+class WebPageProducer : public noncopyable{
  public:
   explicit WebPageProducer(std::string path);
   void start();

@@ -14,7 +14,8 @@
 #include "utils/splitword/SplitEnglish.h"
 #include "Dictionary.h"
 #include "InvertIndex.h"
-class KeyWordProducer {
+#include "utils/base/noncopyable.h"
+class KeyWordProducer : public noncopyable{
  public:
   explicit KeyWordProducer(std::string path);
   ~KeyWordProducer() = default;

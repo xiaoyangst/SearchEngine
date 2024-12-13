@@ -1,2 +1,2 @@
 add_subdirectory(offline)
-#add_subdirectory(online)
+add_subdirectory(online)

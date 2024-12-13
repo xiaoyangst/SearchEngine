@@ -14,12 +14,13 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-class InvertIndex {
+#include "utils/base/noncopyable.h"
+class InvertIndex : public noncopyable{
   using Words = std::vector<std::string>;
   using invertIndexMap = std::unordered_map<std::string , std::unordered_set<unsigned int>>;
  public:
   explicit InvertIndex(std::string dict_path, std::string index_path);
-  virtual ~InvertIndex() = default;
+  ~InvertIndex() = default;
   bool buildInvertIndex();  // 构建倒排索引
   bool createInvertIndex(); // 生成倒排索引文件
  protected:

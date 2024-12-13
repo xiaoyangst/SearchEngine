@@ -16,8 +16,9 @@
 #include <sstream>
 #include "json.hpp"
 #include "SimHashWebPage.h"
+#include "utils/base/noncopyable.h"
 using json = nlohmann::json;
-class WebPageRemove {
+class WebPageRemove : public noncopyable{
  public:
     WebPageRemove(std::string dict_path, std::string index_path,
                   std::string new_dict_path, std::string new_index_path,std::string json_path);
