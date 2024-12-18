@@ -38,6 +38,13 @@ bool CandidatePage::preheat() {
     std::istringstream iss(offset_line);
     iss >> page_index >> start >> end;
     m_offset[page_index] = std::make_pair(start, end);
+
+    // 接着预热 m_dict_map
+    dict_file.seekg(start, std::ios::beg);
+    std::string word(end,0);
+    dict_file.read(word.data(), end);
+    dict_file.seekg(0, std::ios::beg);
+    m_page_info[page_index] = word;
   }
 
   invert_file.seekg(0, std::ios::end);
@@ -57,31 +64,8 @@ bool CandidatePage::preheat() {
     m_union_set[word].insert(page_index);
   }
 
-  dict_file.seekg(0, std::ios::end);
-  auto dict_size = dict_file.tellg();
-  dict_file.seekg(0, std::ios::beg);
-  std::string dict_data(dict_size, 0);
-  dict_file.read(dict_data.data(), dict_size);
-  std::istringstream dict_stream(dict_data);
+  // 建立字典索引 docid --》 内容
 
-  std::string dict_line;
-  unsigned int cur_offset = 0;
-  unsigned int docStart = 0;
-  int docID = 0;
-  bool inDoc = false; // 标记是否在一个 <doc> 段落内
-
-  while (std::getline(dict_stream, dict_line)) {
-    if (dict_line.find("<doc>") != std::string::npos) {
-      docStart = cur_offset;
-      inDoc = true;
-    }
-    if (dict_line.find("</doc>") != std::string::npos && inDoc) {
-      unsigned int docEnd = cur_offset + dict_line.size() + 1; // 换行符得 + 1
-      m_offset[docID++] = {docStart, docEnd-docStart};
-      inDoc = false;
-    }
-    cur_offset += dict_line.size() + 1;  // 换行符得 + 1
-  }
 
   return true;
 }
@@ -103,8 +87,7 @@ void CandidatePage::CandidatePages(const Words &words, CandMap &result) {
     }
   } // 保证  intersection_set 存储的页面（id） 必然包含所有的 words
 
-
-  for (const auto& word : words) {
+  for (const auto& word : words) {  // TODO 严格审查此处代码
     auto page_weight_set = m_webpage_invert.find(word);
     if (page_weight_set != m_webpage_invert.end()) {
       for (auto doc_id : intersection_set) {  // 有价值的页面

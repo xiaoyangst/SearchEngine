@@ -12,7 +12,7 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   // 交集
   auto sig_word_vec = SingleWord::splitString(sentence);
   CandMap result;
-  m_candidatePage->CandidatePages(sig_word_vec, result);
+  m_candidatePage->CandidatePages(sig_word_vec, result);  // TODO result 为空
   // 计算 sentence 权重序列
   auto sentence_weight = weightSentence(sig_word_vec);
   // 排序
@@ -21,6 +21,7 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   json j_array;
   for (int i = 0; i < 10; ++i) {
     if (m_similar_pages.empty()) { break; }
+    std::cout<<m_similar_pages.top().page_id<<std::endl;
     j_array.push_back(m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id));
     m_similar_pages.pop();
   }
@@ -41,9 +42,10 @@ bool WebPageServer::init() {
   std::string webpage_invert = parse["webpage_invert"].get<std::string>();
 
   m_candidatePage = std::make_shared<CandidatePage>(webpage_invert, new_webpage_offset, new_webpage_dict);
-
+  m_candidatePage->preheat();
   return true;
 }
+
 void WebPageServer::sortCandidatePage(PageWeight &sentence, CandMap &pages) {
   for (const auto& page:pages) {
     auto cosine_val = CosineAlgorithm::CosineSimilarity(sentence, page.second);
@@ -52,20 +54,17 @@ void WebPageServer::sortCandidatePage(PageWeight &sentence, CandMap &pages) {
   }
 }
 PageWeight WebPageServer::weightSentence(const Words &words) {
-  // TF
   std::unordered_map<std::string, unsigned int> tf_map;
+  int sum = 0;
   for (const auto &word : words) {
     ++tf_map[word];
+    sum++;
   }
-  // DF 都为 1
-  // int fd = 1;
-  // IDF
-  //auto idf = std::log2(0.5) = -1;
-  // Weight
   PageWeight result;
+  sum == 0 ? sum = 1 : sum;
   for (const auto &weight : tf_map) {
-    std::cout << weight.first << " " << weight.second << std::endl;
-    result[weight.first] = weight.second;
+    std::cout << weight.first << " " << static_cast<double>(weight.second) / sum << std::endl;
+    result[weight.first] = static_cast<double>(weight.second) / sum;  // 频次作为权重
   }
   return result;
 }

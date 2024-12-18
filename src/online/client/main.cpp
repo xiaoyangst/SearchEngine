@@ -39,7 +39,7 @@ int main() {
       printf("onConnection connected to %s! connfd=%d\n", peeraddr.c_str(), channel->fd());
       json first_json;
       first_json["type"] = FUNCTYPE::WEBPAGE;
-      first_json["message"] = "天天开心，好好学习";
+      first_json["message"] = "云服务器";
       std::string message = first_json.dump();
 
       // TODO 粘包拆包问题

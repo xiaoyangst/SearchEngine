@@ -6,12 +6,6 @@ double CosineAlgorithm::CosineSimilarity(const PageWeight &lhs, const PageWeight
   double l_mom = 0;
   double r_mom = 0;
 
-  if (lhs.size() != rhs.size()) {
-    std::cout<<"aaa error"<<std::endl;
-  } else{
-    std::cout<<"aaa ok"<<std::endl;
-  }
-
   for (const auto &lvalue : lhs) {
     auto it = rhs.find(lvalue.first);
     if (it != rhs.end()) {
