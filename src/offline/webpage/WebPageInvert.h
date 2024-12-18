@@ -17,7 +17,7 @@
 #include "utils/splitword/SplitTool.h"
 #include "utils/base/noncopyable.h"
 #include "WordWeight.h"
-using WebPageInvertMap = std::unordered_map<std::string, std::set<std::pair<int, double>>>;
+using WebPageInvertMap = std::unordered_map<std::string, std::set<std::pair<int, double>>>; // int 对应 page 索引
 class WebPageInvert : public noncopyable{
  public:
   WebPageInvert(std::string invert_path,

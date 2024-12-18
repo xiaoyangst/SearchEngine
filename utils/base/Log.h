@@ -43,25 +43,70 @@ class Log : public Singleton<Log>, public std::enable_shared_from_this<Log> {
         break;
     }
   }
+
+  void logMessage(log4cpp::Priority::PriorityLevel level, const char *format, va_list args) {
+    char buffer[1024];
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    switch (level) {
+      case log4cpp::Priority::FATAL:
+        m_rootCategory.fatal(buffer);
+        break;
+      case log4cpp::Priority::ERROR:
+        m_rootCategory.error(buffer);
+        break;
+      case log4cpp::Priority::WARN:
+        m_rootCategory.warn(buffer);
+        break;
+      case log4cpp::Priority::INFO:
+        m_rootCategory.info(buffer);
+        break;
+      case log4cpp::Priority::DEBUG:
+        m_rootCategory.debug(buffer);
+        break;
+      default:
+        m_rootCategory.info(buffer);
+        break;
+    }
+  }
+
   std::string int2string(int lineNumber){
     std::ostringstream oss;
     oss << lineNumber;
     return oss.str();
   }
-  void fatal(const char *msg){
-    m_rootCategory.fatal(msg);
+  void fatal(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    logMessage(log4cpp::Priority::FATAL, format, args);
+    va_end(args);
   }
-  void error(const char *msg){
-    m_rootCategory.error(msg);
+
+  void error(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    logMessage(log4cpp::Priority::ERROR, format, args);
+    va_end(args);
   }
-  void warn(const char *msg){
-    m_rootCategory.warn(msg);
+
+  void warn(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    logMessage(log4cpp::Priority::WARN, format, args);
+    va_end(args);
   }
-  void info(const char *msg){
-    m_rootCategory.info(msg);
+
+  void info(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    logMessage(log4cpp::Priority::INFO, format, args);
+    va_end(args);
   }
-  void debug(const char *msg){
-    m_rootCategory.debug(msg);
+
+  void debug(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    logMessage(log4cpp::Priority::DEBUG, format, args);
+    va_end(args);
   }
   ~Log(){
     log4cpp::Category::shutdown();
@@ -92,21 +137,21 @@ class Log : public Singleton<Log>, public std::enable_shared_from_this<Log> {
     rollingFileAppender->setLayout(pLayoutC);
     m_rootCategory.addAppender(rollingFileAppender);
     m_rootCategory.setPriority(log4cpp::Priority::ERROR);
+
+    setLogLevel(log4cpp::Priority::INFO);
   }
  private:
   log4cpp::Category &m_rootCategory;
 };
 
-#define catMsg(msg) std::string(msg).append(" {fileName:")\
-    .append(__FILE__).append(" functionName:")\
-    .append(__func__).append(" lineNumber:")\
-    .append(Log::Singleton::getInstance()->int2string(__LINE__)).append("}").c_str()
 
+
+#define catMsg(fmt, ...) Log::Singleton::getInstance()->formatString(fmt " {file:%s func:%s line:%d}", __VA_ARGS__, __FILE__, __func__, __LINE__)
 #define logSetLogLevel(priority) Log::Singleton::getInstance()->setLogLevel(priority)
-#define ERROR_LOG(msg) Log::Singleton::getInstance()->error(catMsg(msg))
-#define WARN_LOG(msg) Log::Singleton::getInstance()->warn(catMsg(msg))
-#define INFO_LOG(msg) Log::Singleton::getInstance()->info(catMsg(msg))
-#define DEBUG_LOG(msg) Log::Singleton::getInstance()->debug(catMsg(msg))
-#define FATAL_LOG(msg) Log::Singleton::getInstance()->fatal(catMsg(msg))
+#define ERROR_LOG(fmt, ...) Log::Singleton::getInstance()->error(fmt, ##__VA_ARGS__)
+#define WARN_LOG(fmt, ...) Log::Singleton::getInstance()->warn(fmt, ##__VA_ARGS__)
+#define INFO_LOG(fmt, ...) Log::Singleton::getInstance()->info(fmt, ##__VA_ARGS__)
+#define DEBUG_LOG(fmt, ...) Log::Singleton::getInstance()->debug(fmt, ##__VA_ARGS__)
+#define FATAL_LOG(fmt, ...) Log::Singleton::getInstance()->fatal(fmt, ##__VA_ARGS__)
 
 #endif //SEARCHENGINE_UTILS_BASE_LOG_H_

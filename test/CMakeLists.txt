@@ -1,2 +1,6 @@
 #add_subdirectory(SplitChineseTest)
 #add_subdirectory(SplitEnglishTest)
+#add_subdirectory(CandidateWordTest)
+#add_subdirectory(EditDistanceTest)
+#add_subdirectory(CandidatePageTest)
+add_subdirectory(CosineAlgorithmTest)
