@@ -13,9 +13,9 @@ WebPageRemove::WebPageRemove(std::string dict_path, std::string index_path,
   std::string dict = Configure::getInstance()->get("dict").value();
   std::string hmm = Configure::getInstance()->get("hmm").value();
   std::string idf = Configure::getInstance()->get("idf").value();
-  std::string stop_words = Configure::getInstance()->get("stop_words").value();
+  std::string stop_word = Configure::getInstance()->get("stop_word").value();
 
-  m_simhasher = std::make_shared<SimHashWebPage>(dict, hmm, idf, stop_words);
+  m_simhasher = std::make_shared<SimHashWebPage>(dict, hmm, idf, stop_word);
 }
 void WebPageRemove::buildNewDict() {
   // 根据索引读取网页，然后去重

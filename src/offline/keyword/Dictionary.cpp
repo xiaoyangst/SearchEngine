@@ -14,21 +14,20 @@ bool Dictionary::buildMap() {
   for (const auto &entry : std::filesystem::directory_iterator((m_corpus_dir))) {
     if (entry.is_regular_file()) {
       std::ifstream file(entry.path());
-      if (file.is_open()) {
-        std::string line;
-        while (getline(file, line)) {
-          auto words = m_split_tool->rmStopWords(line); // 分词
-          for (const auto &item : words) {
-            m_map[item]++;  // 统计频率
-          }
-        }
-        file.close();
-      } else {
-        std::cerr << "Failed to open file: " << entry.path() << std::endl;
+      file.seekg(0, std::ios::end);
+      std::streampos file_size = file.tellg();
+      file.seekg(0, std::ios::beg);
+      std::string content(file_size, '\0');
+      file.read(content.data(), file_size); //读取整个文件内容
+      auto words = m_split_tool->rmStopWords(content); // 分词
+      for (const auto &item : words) {
+        m_map[item]++;  // 统计频率
       }
+      file.close();
+    } else {
+      std::cerr << "Failed to open file: " << entry.path() << std::endl;
     }
   }
-
   return true;
 }
 

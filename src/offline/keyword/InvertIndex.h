@@ -21,11 +21,11 @@ class InvertIndex : public noncopyable{
  public:
   explicit InvertIndex(std::string dict_path, std::string index_path);
   ~InvertIndex() = default;
-  bool buildInvertIndex();  // 构建倒排索引
-  bool createInvertIndex(); // 生成倒排索引文件
+  bool buildInvertIndex();
+  bool createInvertIndex();
  protected:
-  std::string m_dict_path;  // 读取词典的路径
-  std::string m_index_path; // 存放倒排索引文件的路径
+  std::string m_dict_path;
+  std::string m_index_path;
   invertIndexMap m_invert_index_map;
 };
 

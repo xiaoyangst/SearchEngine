@@ -9,7 +9,6 @@ WebPageProducer::WebPageProducer()
   std::string new_webpage_dict = Configure::getInstance()->get("new_webpage_dict").value();
   std::string new_webpage_offset = Configure::getInstance()->get("new_webpage_offset").value();
   std::string webpage_invert = Configure::getInstance()->get("webpage_invert").value();
-  std::string simhash_path = Configure::getInstance()->get("simhash_path").value();
   std::string stop_word = Configure::getInstance()->get("stop_word").value();
 
   m_web_page = std::make_unique<WebPage>(xml_path,webpage_dict);

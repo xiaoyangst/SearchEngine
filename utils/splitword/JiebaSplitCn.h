@@ -12,8 +12,8 @@
 #define SEARCHENGINE_SRC_OFFLINE_KEYWORD_JIEBASPLITCN_H_
 #include <string>
 #include <vector>
-#include "json.hpp"
-#include "cppjieba/Jieba.hpp"
+#include "utils/base/json.hpp"
+#include "thirdpart/cppjieba/Jieba.hpp"
 #include "utils/base/Singleton.h"
 using json = nlohmann::json;
 class JiebaSplitCn : public Singleton<JiebaSplitCn> {

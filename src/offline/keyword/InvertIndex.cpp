@@ -6,9 +6,7 @@
 
 InvertIndex::InvertIndex(std::string dict_path, std::string index_path)
   :m_dict_path(std::move(dict_path)),m_index_path(std::move(index_path))
-{
-
-}
+{}
 
 
 bool InvertIndex::buildInvertIndex() {
@@ -31,6 +29,7 @@ bool InvertIndex::buildInvertIndex() {
   }
   return true;
 }
+
 
 bool InvertIndex::createInvertIndex() {
   std::ofstream ofs(m_index_path);

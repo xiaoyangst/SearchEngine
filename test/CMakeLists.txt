@@ -4,3 +4,4 @@
 #add_subdirectory(EditDistanceTest)
 #add_subdirectory(CandidatePageTest)
 #add_subdirectory(CosineAlgorithmTest)
+#add_subdirectory(DictionaryPerf)
