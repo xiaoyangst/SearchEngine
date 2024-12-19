@@ -4,24 +4,14 @@
 #include <iostream>
 #include <cstring>
 #include <arpa/inet.h>
-#define LEN_XY 1024
+constexpr size_t SERVER_HEAD_LENGTH = 4;
+constexpr size_t SERVER_HEAD_LENGTH_FIELD_OFFSET = 0;
+constexpr size_t SERVER_HEAD_LENGTH_FIELD_BYTES = 4;
 class HvProtocol {
  public:
   // 封包函数，将字符串封装成自定义协议格式（头部+数据）
-  static std::string packMessageAsString(const char* data) {
-    int len = strlen(data);
-    char buf[1024] = {0};
-    memcpy(buf, &len, 4);
-    memcpy(buf + 4, data, len);
-    printf("%s\n",buf);
-    return std::string(buf,4+len);
-  }
-
-// 拆包函数，从接收到的数据中提取消息
-  static std::string unpackMessage(const std::string &receivedData) {
-    int len = 0;
-    memcpy(&len, receivedData.data(), 4);
-    return receivedData.substr(4, len);
-  }
+  static std::string packMessageAsString(const std::string &message);
+  // 拆包函数，从接收到的数据中提取消息
+  static std::string unpackMessage(const std::string &receivedData);
 };
 #endif //SEARCHENGINE_UTILS_BASE_HVPROTOCOL_H_

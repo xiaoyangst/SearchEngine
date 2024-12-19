@@ -16,9 +16,6 @@
 #include "utils/base/Singleton.h"
 #include "KeyWordServer.h"
 #include "WebPageServer.h"
-constexpr size_t SERVER_HEAD_LENGTH = 5;
-constexpr size_t SERVER_HEAD_LENGTH_FIELD_OFFSET = 1;
-constexpr size_t SERVER_HEAD_LENGTH_FIELD_BYTES = 4;
 
 class TcpServer : public Singleton<TcpServer> {
   friend class Singleton<TcpServer>;

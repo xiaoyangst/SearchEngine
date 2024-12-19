@@ -1,0 +1,21 @@
+{
+  "en_stop": "sources/project/dict/stop_words.utf8",
+  "cn_stop": "sources/project/dict/stop_words.utf8",
+  "en_corpus": "sources/project/corpus/en",
+  "cn_corpus": "sources/project/corpus/cn",
+  "en_dict": "data/en_dict.dat",
+  "cn_dict": "data/cn_dict.dat",
+  "en_invert": "data/en_invert.dat",
+  "cn_invert": "data/cn_invert.dat",
+  "jieba_json": "conf/jieba.json",
+  "dict": "sources/project/dict/jieba.dict.utf8",
+  "hmm": "sources/project/dict/hmm_model.utf8",
+  "idf": "sources/project/dict/idf.utf8",
+  "xml_path": "sources/project/page",
+  "webpage_dict": "data/webpage.dat",
+  "webpage_offset": "data/webpage_offset.dat",
+  "new_webpage_dict": "data/new_webpage.dat",
+  "new_webpage_offset": "data/new_webpage_offset.dat",
+  "webpage_invert": "data/webpage_invert.dat",
+  "stop_word": "sources/project/dict/stop_words.utf8"
+}

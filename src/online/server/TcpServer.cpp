@@ -12,17 +12,16 @@ TcpServer::TcpServer(const std::string &ip, const int port, const int thread_num
     ERROR_LOG("create socket error");
     return;
   }
-  /*
   server_unpack_setting = new unpack_setting_t();
   memset(server_unpack_setting, 0, sizeof(unpack_setting_t));
   server_unpack_setting->mode = UNPACK_BY_LENGTH_FIELD;
   server_unpack_setting->package_max_length = DEFAULT_PACKAGE_MAX_LENGTH;
-  server_unpack_setting->body_offset = 4;
-  server_unpack_setting->length_field_offset = 4;
-  server_unpack_setting->length_field_bytes = 0;
+  server_unpack_setting->body_offset = SERVER_HEAD_LENGTH;
+  server_unpack_setting->length_field_offset = SERVER_HEAD_LENGTH_FIELD_OFFSET;
+  server_unpack_setting->length_field_bytes = SERVER_HEAD_LENGTH_FIELD_BYTES;
   server_unpack_setting->length_field_coding = ENCODE_BY_BIG_ENDIAN;
   m_server.setUnpack(server_unpack_setting);
-*/
+
   m_server.setThreadNum(thread_num);
   m_server.onConnection = [this](const hv::SocketChannelPtr &conn) {
     onConnection(conn);
@@ -67,12 +66,10 @@ void TcpServer::onConnection(const hv::SocketChannelPtr &conn) {
 }
 
 void TcpServer::onMessage(const hv::SocketChannelPtr &conn, hv::Buffer *buf) {
-  // TODO 粘包拆包问题
-  std::cout << "onMessage" << std::endl;
-  auto data = std::string((char *) (buf->data()));
-  //auto tmp = HvProtocol::unpackMessage(data);
-  std::cout<<data<<std::endl;
-  json Message = json::parse(data);
+  std::string data = std::string((char *) buf->data(), buf->size());
+  auto tmp = HvProtocol::unpackMessage(data);
+  std::cout << tmp << std::endl;
+  json Message = json::parse(tmp);
   auto type = Message["type"].get<FUNCTYPE>();
   auto message = Message["message"].get<std::string>();
   json reply;
@@ -89,5 +86,5 @@ void TcpServer::onMessage(const hv::SocketChannelPtr &conn, hv::Buffer *buf) {
     }
     default:break;
   }
-  conn->write(reply.dump());
+  conn->write(HvProtocol::packMessageAsString(reply.dump()));
 }

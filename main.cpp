@@ -94,31 +94,27 @@ int main() {
 */
 #include <iostream>
 #include <queue>
-#include <vector>
 
-struct SimilarityPage {
-  int page_id;  // 页面 id
-  double cosine_val;  // 余弦值，值越小越相似，越靠前
-
-  // 重载 < 运算符，使得余弦值小的对象排在前面
-  bool operator<(const SimilarityPage& other) const {
-    return cosine_val < other.cosine_val;  // 余弦值小的排前面
-  }
-};
-
-
+#include "utils/base/Configure.h"
+#include "utils/base/HvProtocol.h"
 int main() {
-  std::priority_queue<SimilarityPage> pq;
-
-  pq.push({1, 0.8});
-  pq.push({2, 0.5});
-  pq.push({3, 0.9});
-
-  while (!pq.empty()) {
-    const SimilarityPage& page = pq.top();
-    std::cout << "Page ID: " << page.page_id << ", Cosine Value: " << page.cosine_val << std::endl;
-    pq.pop();
+  //Configure config;
+  //auto re = config.get("stop_word");
+  /*
+  auto re = Configure::getInstance()->get("stop_word");
+  if (re == std::nullopt) {
+    std::cout << "null" << std::endl;
+  } else {
+    std::cout << *re << std::endl;
   }
+   */
+
+  const std::string message = "hello";
+
+  auto re = HvProtocol::packMessageAsString(message);
+  std::cout << "re = " << re << std::endl;
+  auto tmp = HvProtocol::unpackMessage(re);
+  std::cout << "tmp = " << tmp << std::endl;
 
   return 0;
 }

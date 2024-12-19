@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <algorithm>
 #include "InvertIndex.h"
 #include "utils/base/SingleWord.h"
 

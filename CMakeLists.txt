@@ -9,5 +9,5 @@ add_subdirectory(src)
 
 enable_testing()
 add_subdirectory(test)
-
-add_executable(SearchEngine main.cpp)
+aux_source_directory(utils/base BASE_MAIN_SRC)
+add_executable(SearchEngine main.cpp ${BASE_MAIN_SRC})
