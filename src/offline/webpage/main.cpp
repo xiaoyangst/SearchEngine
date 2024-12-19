@@ -1,7 +1,7 @@
 #include "WebPageProducer.h"
 int main() {
-  std::string path = "conf/webpage.json";
-    WebPageProducer web_page_producer(path);
+
+    WebPageProducer web_page_producer;
     web_page_producer.start();
     return 0;
 }

@@ -4,25 +4,18 @@
 #include "WebPageRemove.h"
 
 WebPageRemove::WebPageRemove(std::string dict_path, std::string index_path,
-                             std::string new_dict_path, std::string new_index_path, std::string json_path)
+                             std::string new_dict_path, std::string new_index_path)
     : m_dict_path(std::move(dict_path)),
       m_index_path(std::move(index_path)),
       m_new_dict_path(std::move(new_dict_path)),
-      m_new_index_path(std::move(new_index_path)),
-      m_json_path(std::move(json_path)) {
+      m_new_index_path(std::move(new_index_path)) {
 
-  std::ifstream json_ifs(m_json_path);
-  if (!json_ifs.is_open()) {
-    std::cerr << "open simhash json file failed" << std::endl;
-    return;
-  }
+  std::string dict = Configure::getInstance()->get("dict").value();
+  std::string hmm = Configure::getInstance()->get("hmm").value();
+  std::string idf = Configure::getInstance()->get("idf").value();
+  std::string stop_words = Configure::getInstance()->get("stop_words").value();
 
-  json json_parse;
-  json_ifs >> json_parse;
-  m_simhasher = std::make_shared<SimHashWebPage>(json_parse["dict"].get<std::string>(),
-                                                 json_parse["hmm"].get<std::string>(),
-                                                 json_parse["idf"].get<std::string>(),
-                                                 json_parse["stop_words"].get<std::string>());
+  m_simhasher = std::make_shared<SimHashWebPage>(dict, hmm, idf, stop_words);
 }
 void WebPageRemove::buildNewDict() {
   // 根据索引读取网页，然后去重

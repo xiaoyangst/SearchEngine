@@ -4,11 +4,35 @@
 #include "utils/base/HvProtocol.h"
 #include <iostream>
 #include <cstring>
+#include <istream>
+#include <thread>
+#include <atomic>
 
 using json = nlohmann::json;
 
-int main() {
+// 获取用户输入的函数
+void getInput(std::string &type, std::string &message) {
+  std::cout << "请输入命令类型：";
+  std::getline(std::cin, type);
 
+  std::cout << "请输入查询数据：";
+  std::getline(std::cin, message);
+}
+
+// 处理输入并发送消息的函数
+void MainWindows(const hv::SocketChannelPtr &channel, const std::string &type, const std::string &message) {
+  json data;
+  if (type == "keyword") {
+    data["type"] = FUNCTYPE::KEYWORD;
+  } else if (type == "webpage") {
+    data["type"] = FUNCTYPE::WEBPAGE;
+  }
+  data["message"] = message;
+  channel->write(HvProtocol::packMessageAsString(data.dump()));
+  std::cout << std::endl;
+}
+
+int main() {
   std::string m_ip = "127.0.0.1";
   int m_port = 8080;
 
@@ -29,16 +53,18 @@ int main() {
   tcp_client.setUnpack(server_unpack_setting);
 
   std::cout << "client connect server ip = " << m_ip << " port = " << m_port << std::endl;
+
   // 连接建立回调
   tcp_client.onConnection = [&](const hv::SocketChannelPtr &channel) {
     std::string peeraddr = channel->peeraddr();
     if (channel->isConnected()) {
       printf("onConnection connected to %s! connfd=%d\n", peeraddr.c_str(), channel->fd());
-      json first_json;
-      first_json["type"] = FUNCTYPE::KEYWORD;
-      first_json["message"] = "中国";
-      std::string message = first_json.dump();
-      channel->write(HvProtocol::packMessageAsString(message));
+
+      // 在独立线程中等待输入
+      std::string type, message;
+      std::thread input_thread(getInput, std::ref(type), std::ref(message));
+      input_thread.join();
+      MainWindows(channel, type, message);
     } else {
       printf("onConnection disconnected to %s! connfd=%d\n", peeraddr.c_str(), channel->fd());
       printf("连接断开\n");
@@ -52,9 +78,20 @@ int main() {
     printf("onMessage connected to %s! connfd=%d\n", peeraddr.c_str(), channel->fd());
     std::string data = std::string((char *) buf->data(), buf->size());
     std::cout << "接收到数据:" << HvProtocol::packMessageAsString(data) << std::endl;
+
+    // 在收到数据后再获取输入
+    std::string type, message;
+    std::thread input_thread(getInput, std::ref(type), std::ref(message));
+    input_thread.join();
+    MainWindows(channel, type, message);
   };
+
   tcp_client.start();
-  while (getchar() != '\n');
+
+  // 防止主线程退出
+  while (true) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // 防止主线程退出
+  }
 
   return 0;
 }

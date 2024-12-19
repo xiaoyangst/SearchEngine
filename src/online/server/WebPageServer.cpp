@@ -3,10 +3,7 @@
 #include "WebPageServer.h"
 #include "utils/base/Log.h"
 using json = nlohmann::json;
-WebPageServer::WebPageServer(std::string path)
-    : m_path(std::move(path)) {
 
-}
 
 std::string WebPageServer::getWebPage(std::string &sentence) {
   // 交集
@@ -21,25 +18,15 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   json j_array;
   for (int i = 0; i < 10; ++i) {
     if (m_similar_pages.empty()) { break; }
-    std::cout<<m_similar_pages.top().page_id<<std::endl;
     j_array.push_back(m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id));
     m_similar_pages.pop();
   }
   return j_array.dump();
 }
 bool WebPageServer::init() {
-  std::ifstream ifs(m_path);
-  if (!ifs.is_open()) {
-    ERROR_LOG("open json file %s failed", m_path.c_str());
-    return false;
-  }
-
-  json parse;
-  ifs >> parse;
-
-  std::string new_webpage_dict = parse["new_webpage_dict"].get<std::string>();
-  std::string new_webpage_offset = parse["new_webpage_offset"].get<std::string>();
-  std::string webpage_invert = parse["webpage_invert"].get<std::string>();
+  std::string new_webpage_dict = Configure::getInstance()->get("new_webpage_dict").value();
+  std::string new_webpage_offset = Configure::getInstance()->get("new_webpage_offset").value();
+  std::string webpage_invert = Configure::getInstance()->get("webpage_invert").value();
 
   m_candidatePage = std::make_shared<CandidatePage>(webpage_invert, new_webpage_offset, new_webpage_dict);
   m_candidatePage->preheat();
@@ -49,7 +36,6 @@ bool WebPageServer::init() {
 void WebPageServer::sortCandidatePage(PageWeight &sentence, CandMap &pages) {
   for (const auto& page:pages) {
     auto cosine_val = CosineAlgorithm::CosineSimilarity(sentence, page.second);
-    std::cout << page.first << " " << cosine_val << std::endl;
     m_similar_pages.push({page.first, cosine_val});
   }
 }
@@ -63,7 +49,6 @@ PageWeight WebPageServer::weightSentence(const Words &words) {
   PageWeight result;
   sum == 0 ? sum = 1 : sum;
   for (const auto &weight : tf_map) {
-    std::cout << weight.first << " " << static_cast<double>(weight.second) / sum << std::endl;
     result[weight.first] = static_cast<double>(weight.second) / sum;  // 频次作为权重
   }
   return result;

@@ -1,30 +1,20 @@
 #include "WebPageProducer.h"
 #include "json.hpp"
 using json = nlohmann::json;
-WebPageProducer::WebPageProducer(std::string path)
-  :m_path(std::move(path))
+WebPageProducer::WebPageProducer()
 {
-  json json_parse;
-  std::ifstream ifs(m_path);
-  if (!ifs.is_open()) {
-    std::cerr << "open json file failed" << std::endl;
-    return;
-  }
-  ifs >> json_parse;
-
-  std::string xml_path = json_parse["xml_path"].get<std::string>();
-  std::string webpage_dict = json_parse["webpage_dict"].get<std::string>();
-  std::string webpage_offset = json_parse["webpage_offset"].get<std::string>();
-  std::string new_webpage_dict = json_parse["new_webpage_dict"].get<std::string>();
-  std::string new_webpage_offset = json_parse["new_webpage_offset"].get<std::string>();
-  std::string webpage_invert = json_parse["webpage_invert"].get<std::string>();
-  std::string simhash_path = json_parse["simhash_path"].get<std::string>();
-  std::string stop_word = json_parse["stop_word"].get<std::string>();
-  std::string jieba_json = json_parse["jieba_json"].get<std::string>();
+  std::string xml_path = Configure::getInstance()->get("xml_path").value();
+  std::string webpage_dict = Configure::getInstance()->get("webpage_dict").value();
+  std::string webpage_offset = Configure::getInstance()->get("webpage_offset").value();
+  std::string new_webpage_dict = Configure::getInstance()->get("new_webpage_dict").value();
+  std::string new_webpage_offset = Configure::getInstance()->get("new_webpage_offset").value();
+  std::string webpage_invert = Configure::getInstance()->get("webpage_invert").value();
+  std::string simhash_path = Configure::getInstance()->get("simhash_path").value();
+  std::string stop_word = Configure::getInstance()->get("stop_word").value();
 
   m_web_page = std::make_unique<WebPage>(xml_path,webpage_dict);
   m_web_page_offset = std::make_unique<WebPageOffset>(webpage_dict,webpage_offset);
-  m_web_page_remove = std::make_unique<WebPageRemove>(webpage_dict, webpage_offset, new_webpage_dict, new_webpage_offset,simhash_path);
+  m_web_page_remove = std::make_unique<WebPageRemove>(webpage_dict, webpage_offset, new_webpage_dict, new_webpage_offset);
   m_split_chinese = std::make_shared<SplitChinese>(stop_word);
   m_web_page_invert = std::make_unique<WebPageInvert>(webpage_invert, new_webpage_dict, new_webpage_offset, m_split_chinese);
 }

@@ -1,26 +1,12 @@
 #include "KeyWordServer.h"
 #include "utils/base/Log.h"
 #include "EditDistance.h"
-#include <fstream>
-
-KeyWordServer::KeyWordServer(std::string path)
-    : m_path(std::move(path)) {
-}
-
 bool KeyWordServer::init() {
-  std::ifstream ifs(m_path);
-  if (!ifs.is_open()) {
-    ERROR_LOG("open json file %s failed", m_path.c_str());
-    return false;
-  }
 
-  json parse;
-  ifs >> parse;
-
-  std::string en_dict_path = parse["en_dict"].get<std::string>();
-  std::string en_invert_path = parse["en_invert"].get<std::string>();
-  std::string cn_dict_path = parse["cn_dict"].get<std::string>();
-  std::string cn_invert_path = parse["cn_invert"].get<std::string>();
+  std::string en_dict_path = Configure::getInstance()->get("en_dict").value();
+  std::string en_invert_path = Configure::getInstance()->get("en_invert").value();
+  std::string cn_dict_path = Configure::getInstance()->get("cn_dict").value();
+  std::string cn_invert_path = Configure::getInstance()->get("cn_invert").value();
 
   m_en_candidateWord = std::make_shared<CandidateWord>(en_dict_path, en_invert_path);
   m_cn_candidateWord = std::make_shared<CandidateWord>(cn_dict_path, cn_invert_path);

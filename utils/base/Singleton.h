@@ -3,7 +3,7 @@
   * @file           : Singleton.h
   * @author         : xy
   * @brief          : 线程安全模板单例类
-  * @attention      : None
+  * @attention      : 使用者 必须让可执行程序 链接 pthread，否则 报错 std::system_error（call_once 触发）
   * @date           : 2024/11/26
   ******************************************************************************
   */

@@ -17,13 +17,13 @@
 #include "WebPageInvert.h"
 #include "utils/splitword/SplitChinese.h"
 #include "utils/base/noncopyable.h"
+#include "utils/base/Configure.h"
 class WebPageProducer : public noncopyable{
  public:
-  explicit WebPageProducer(std::string path);
+  explicit WebPageProducer();
   void start();
   ~WebPageProducer() = default;
  private:
-  std::string m_path;
   std::unique_ptr<WebPage> m_web_page;
   std::unique_ptr<WebPageOffset> m_web_page_offset;
   std::unique_ptr<WebPageRemove> m_web_page_remove;

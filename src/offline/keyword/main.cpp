@@ -2,8 +2,7 @@
 #include <string>
 int main(){
 
-  std::string path = "conf/keyword.json";
-  KeyWordProducer key(path);
+  KeyWordProducer key;
   key.start();
 
   return 0;

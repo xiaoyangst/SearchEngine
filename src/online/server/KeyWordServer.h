@@ -14,6 +14,7 @@
 #include <queue>
 #include "json.hpp"
 #include "CandidateWord.h"
+#include "utils/base/Configure.h"
 #include "utils/base/SingleWord.h"
 #include "utils/splitword/SplitChinese.h"
 #include "utils/splitword/SplitEnglish.h"
@@ -41,13 +42,12 @@ struct SimilarityWord{
 };
 class KeyWordServer {
  public:
-  explicit KeyWordServer(std::string path);
+  explicit KeyWordServer() = default;
   bool init();
   std::string getKeyWord(std::string& word); // 放入一个 json 的array中
  private:
   void sortCandidateWord(CandVec & words,const std::string& key_word);
  private:
-  std::string m_path;
   std::shared_ptr<CandidateWord> m_en_candidateWord;
   std::shared_ptr<CandidateWord> m_cn_candidateWord;
   std::priority_queue<SimilarityWord> m_result; // 默认大顶堆

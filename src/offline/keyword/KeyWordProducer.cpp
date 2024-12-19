@@ -1,27 +1,17 @@
-#include <fstream>
 #include <iostream>
 #include "KeyWordProducer.h"
 #include "json.hpp"
 using json = nlohmann::json;
-KeyWordProducer::KeyWordProducer(std::string path) : m_path(std::move(path)) {
-  json json_parse;
-  std::ifstream ifs(m_path);
-  if (!ifs.is_open()) {
-    std::cerr << "open json file failed" << std::endl;
-    return;
-  }
-  ifs >> json_parse;
+KeyWordProducer::KeyWordProducer() {
 
-  std::string en_stop = json_parse["en_stop"].get<std::string>();
-  std::string cn_stop = json_parse["cn_stop"].get<std::string>();
-  std::string en_corpus = json_parse["en_corpus"].get<std::string>();
-  std::string cn_corpus = json_parse["cn_corpus"].get<std::string>();
-  std::string en_dict = json_parse["en_dict"].get<std::string>();
-  std::string cn_dict = json_parse["cn_dict"].get<std::string>();
-  std::string en_invert = json_parse["en_invert"].get<std::string>();
-  std::string cn_invert = json_parse["cn_invert"].get<std::string>();
-
-  std::string jieba_json = json_parse["jieba_json"].get<std::string>();
+  std::string en_stop = Configure::getInstance()->get("en_stop").value();
+  std::string cn_stop = Configure::getInstance()->get("cn_stop").value();
+  std::string en_corpus = Configure::getInstance()->get("en_corpus").value();
+  std::string cn_corpus = Configure::getInstance()->get("cn_corpus").value();
+  std::string en_dict = Configure::getInstance()->get("en_dict").value();
+  std::string cn_dict = Configure::getInstance()->get("cn_dict").value();
+  std::string en_invert = Configure::getInstance()->get("en_invert").value();
+  std::string cn_invert = Configure::getInstance()->get("cn_invert").value();
 
   std::shared_ptr<SplitTool> en_split_tool = std::make_shared<SplitEnglish>(en_stop);
   m_en_dictionary = std::make_unique<Dictionary>(en_corpus, en_dict, en_split_tool);

@@ -1,6 +1,7 @@
 #include "JiebaSplitCn.h"
 #include "cppjieba/Jieba.hpp"
 
+// 写死，不读配置文件处理
 std::string cppjiebb_dict = "sources/project/dict/jieba.dict.utf8";
 std::string cppjieba_hmm = "sources/project/dict/hmm_model.utf8";
 std::string cppjieba_user = "sources/project/dict/user.dict.utf8";

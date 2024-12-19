@@ -30,15 +30,13 @@ TcpServer::TcpServer(const std::string &ip, const int port, const int thread_num
     onMessage(conn, buf);
   };
 
-  std::string keyword_path = "conf/keyword.json";
-  m_keyword_server = std::make_shared<KeyWordServer>(keyword_path);
+  m_keyword_server = std::make_shared<KeyWordServer>();
   if (!m_keyword_server->init()) {
     ERROR_LOG("keyword server init failed");
     return;
   }
 
-  std::string webpage_path = "conf/webpage.json";
-  m_web_page_server = std::make_shared<WebPageServer>(webpage_path);
+  m_web_page_server = std::make_shared<WebPageServer>();
   if (!m_web_page_server->init()) {
     ERROR_LOG("webpage server init failed");
     return;

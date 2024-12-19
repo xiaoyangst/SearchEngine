@@ -16,22 +16,26 @@
 #include <mutex>
 #include "json.hpp"
 #include "noncopyable.h"
-
+#include "Singleton.h"
 #define CONFIG_JSON_PATH "conf/config.json"
 
-class Configure : public noncopyable {
+class Configure : public Singleton<Configure> {
  public:
-  static Configure *getInstance();
   std::optional<std::string> get(const std::string &key);
  public:
   Configure();
   ~Configure() = default;
-  static void destroy();
  private:
-  void PrintTest(); // 测试打印
- private:
-  static Configure *m_instance;
-  static std::unordered_map<std::string, std::string> m_configureMap;
+  std::unordered_map<std::string, std::string> m_configureMap;
 };
 
 #endif //SEARCHENGINE_UTILS_BASE_CONFIGURE_H_
+
+/***************** usage ****************
+  auto re = Configure::getInstance()->get("stop_word");
+  if (re == std::nullopt) {
+    std::cout << "null" << std::endl;
+  } else {
+    std::cout << *re << std::endl;
+  }
+ */

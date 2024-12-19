@@ -14,6 +14,7 @@
 #include <queue>
 #include "CandidatePage.h"
 #include "utils/base/SingleWord.h"
+#include "utils/base/Configure.h"
 #include "CosineAlgorithm.h"
 #include "json.hpp"
 struct SimilarityPage {
@@ -27,14 +28,13 @@ struct SimilarityPage {
 
 class WebPageServer {
  public:
-  explicit WebPageServer(std::string path);
+  WebPageServer() = default;
   bool init();
   std::string getWebPage(std::string &sentence);
  private:
   PageWeight weightSentence(const Words& words);
   void sortCandidatePage(PageWeight& sentence,CandMap& pages);
  private:
-  std::string m_path;
   std::shared_ptr<CandidatePage> m_candidatePage;
   std::priority_queue<SimilarityPage> m_similar_pages;
   CandMap m_sentence_weight;

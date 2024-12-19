@@ -17,11 +17,12 @@
 #include "json.hpp"
 #include "SimHashWebPage.h"
 #include "utils/base/noncopyable.h"
+#include "utils/base/Configure.h"
 using json = nlohmann::json;
 class WebPageRemove : public noncopyable{
  public:
     WebPageRemove(std::string dict_path, std::string index_path,
-                  std::string new_dict_path, std::string new_index_path,std::string json_path);
+                  std::string new_dict_path, std::string new_index_path);
     ~WebPageRemove() = default;
 
     void buildNewDict();
@@ -31,7 +32,6 @@ class WebPageRemove : public noncopyable{
   std::string m_index_path;
   std::string m_new_dict_path;
   std::string m_new_index_path;
-  std::string m_json_path;
   std::unordered_set<uint64_t> m_hash_set;  // 计算之后如果没有，就写入 Dict
   std::shared_ptr<SimHashWebPage> m_simhasher;
 };
