@@ -9,6 +9,8 @@ bool KeyWordServer::init() {
   std::string cn_invert_path = Configure::getInstance()->get("cn_invert").value();
   std::string redis_ip = Configure::getInstance()->get("redis_ip").value();
   std::string redis_port = Configure::getInstance()->get("redis_port").value();
+  std::string redis_ttl = Configure::getInstance()->get("redis_ttl").value();
+  m_redis_ttl = std::stoi(redis_ttl);
 
   m_en_candidateWord = std::make_shared<CandidateWord>(en_dict_path, en_invert_path);
   m_cn_candidateWord = std::make_shared<CandidateWord>(cn_dict_path, cn_invert_path);
@@ -41,7 +43,7 @@ std::string KeyWordServer::getKeyWord(std::string &word) {
   if (m_redis->exists(word)) {
     std::cout << "keyword 走缓存" << std::endl;
     std::unordered_set<std::string> re;
-    m_redis->smembers(word,std::inserter(re,re.begin()));
+    m_redis->smembers(word, std::inserter(re, re.begin()));
     json data(re);
     return data.dump();
   }
@@ -59,6 +61,7 @@ std::string KeyWordServer::getKeyWord(std::string &word) {
     auto data = m_result.top().word;
     j_array.push_back(data);
     m_redis->sadd(word, data); // 记得插入到 redis，以便后续走缓存
+    m_redis->expire(word,m_redis_ttl);  // 设置过期时间
     m_result.pop();
   }
   std::cout << "keyword 走磁盘" << std::endl;

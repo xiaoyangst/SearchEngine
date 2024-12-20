@@ -53,6 +53,7 @@ class KeyWordServer {
   std::shared_ptr<CandidateWord> m_cn_candidateWord;
   std::priority_queue<SimilarityWord> m_result; // 默认大顶堆
   std::shared_ptr<sw::redis::Redis> m_redis;
+  unsigned int m_redis_ttl;
 };
 
 

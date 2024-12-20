@@ -6,7 +6,15 @@ Json库：json.hpp
 
 测试框架：gtest
 
+性能测试工具或框架：perf、benchmark
+
 分词库：cppjieba
+
+xml解析库：tinyxml
+
+redis相关库：hredis、redis++
+
+日志库：log4cpp
 
 # 面试准备
 

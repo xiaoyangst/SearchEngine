@@ -11,6 +11,8 @@ bool WebPageServer::init() {
   std::string webpage_invert = Configure::getInstance()->get("webpage_invert").value();
   std::string redis_ip = Configure::getInstance()->get("redis_ip").value();
   std::string redis_port = Configure::getInstance()->get("redis_port").value();
+  std::string redis_ttl = Configure::getInstance()->get("redis_ttl").value();
+  m_redis_ttl = std::stoi(redis_ttl);
 
   m_candidatePage = std::make_shared<CandidatePage>(webpage_invert, new_webpage_offset, new_webpage_dict);
   if (!m_candidatePage->preheat()) {
@@ -58,6 +60,8 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
     if (m_similar_pages.empty()) { break; }
     auto data = m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id); // 走磁盘
     m_redis->sadd(sentence, data); // 记得插入到 redis，以便后续走缓存
+    m_redis->expire(sentence,m_redis_ttl);  // 设置过期时间
+    j_array.push_back(data);
     j_array.emplace_back(data);
     m_similar_pages.pop();
   }

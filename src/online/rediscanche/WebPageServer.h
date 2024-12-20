@@ -41,6 +41,7 @@ class WebPageServer {
   std::priority_queue<SimilarityPage> m_similar_pages;
   CandMap m_sentence_weight;
   std::shared_ptr<sw::redis::Redis> m_redis;
+  unsigned int m_redis_ttl;
  private:
 
 };
