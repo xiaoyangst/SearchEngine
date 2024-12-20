@@ -15,10 +15,8 @@
 #include <vector>
 #include <string>
 #include <gtest/gtest.h>
-#include <fstream>
 #include "utils/base/noncopyable.h"
 using WebPageInvertMap = std::unordered_map<std::string, std::unordered_map<int, double>>;
-using PageInfo = std::unordered_map<int ,std::string>;  // 磁盘存储的网页信息
 using WebPageOffsetMap = std::map<int,std::pair<unsigned int,unsigned int>>;
 using Words = std::vector<std::string>;
 using UnionSet = std::unordered_map<std::string, std::set<int>>;
@@ -29,15 +27,15 @@ class CandidatePage : public noncopyable{
   ~CandidatePage() = default;
   bool preheat();
   void CandidatePages(const Words& words,CandMap& result);
-  std::string& getWebPageInfo(int page_id);
+  std::string getWebPageInfo(int page_id);
  private:
   std::string m_invert_path;
   std::string m_offset_path;
   std::string m_dict_path;
+  std::unique_ptr<std::ifstream> m_dict_ifs;
   WebPageInvertMap m_webpage_invert;
   WebPageOffsetMap m_offset;
   UnionSet m_union_set;
-  PageInfo m_page_info;
  public:
   FRIEND_TEST(CandidatePageTest, CandidatePages);
 };

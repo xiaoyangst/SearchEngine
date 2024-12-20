@@ -1,6 +1,7 @@
 #include "CandidatePage.h"
 #include "utils/base/Log.h"
 #include <iostream>
+#include <fstream>
 
 CandidatePage::CandidatePage(std::string invert_path, std::string offset_path, std::string dict_path)
     : m_invert_path(std::move(invert_path)), m_offset_path(std::move(offset_path)), m_dict_path(std::move(dict_path)) {}
@@ -16,8 +17,8 @@ bool CandidatePage::preheat() {
     ERROR_LOG("open invert file %s failed", m_invert_path.c_str());
     return false;
   }
-  std::ifstream dict_file(m_dict_path);
-  if (!invert_file.is_open()) {
+  m_dict_ifs = std::make_unique<std::ifstream>(m_dict_path);
+  if (!m_dict_ifs->is_open()) {
     ERROR_LOG("open dict file %s failed", m_dict_path.c_str());
     return false;
   }
@@ -38,12 +39,6 @@ bool CandidatePage::preheat() {
     iss >> page_index >> start >> end;
     m_offset[page_index] = std::make_pair(start, end);
 
-    // 接着预热 m_page_info
-    dict_file.seekg(start, std::ios::beg);
-    std::string word(end, 0);
-    dict_file.read(word.data(), end);
-    dict_file.seekg(0, std::ios::beg);
-    m_page_info[page_index] = word;
   }
 
   invert_file.seekg(0, std::ios::end);
@@ -62,9 +57,6 @@ bool CandidatePage::preheat() {
     m_webpage_invert[word].insert(std::make_pair(page_index, weight));
     m_union_set[word].insert(page_index);
   }
-
-  // 建立字典索引 docid --》 内容
-
 
   return true;
 }
@@ -86,7 +78,7 @@ void CandidatePage::CandidatePages(const Words &words, CandMap &result) {
     }
   } // 保证  intersection_set 存储的页面（id） 必然包含所有的 words
 
-  for (const auto &word : words) {  // TODO 严格审查此处代码
+  for (const auto& word : words) {  // TODO 严格审查此处代码
     auto page_weight_set = m_webpage_invert.find(word);
     if (page_weight_set != m_webpage_invert.end()) {
       for (auto doc_id : intersection_set) {  // 有价值的页面
@@ -98,20 +90,20 @@ void CandidatePage::CandidatePages(const Words &words, CandMap &result) {
     }
   }
 }
-/*
 std::string CandidatePage::getWebPageInfo(int page_id) {
-  auto item = m_page_info.find(page_id);
-  if (item != m_page_info.end()) {
-    return item->second;
+  // 先去 走 Redis 缓存
+
+  // 发现没有，再往下执行 走磁盘
+
+  auto iter = m_offset.find(page_id);
+  if (iter != m_offset.end()) {
+    auto start = iter->second.first;
+    auto end = iter->second.second;
+    m_dict_ifs->seekg(start, std::ios::beg);
+    std::string word(end, 0);
+    m_dict_ifs->read(word.data(), end);
+    m_dict_ifs->seekg(0, std::ios::beg);
+    return word;
   }
   return "";
-}
-*/
-std::string& CandidatePage::getWebPageInfo(int page_id) {
-  auto item = m_page_info.find(page_id);
-  if (item != m_page_info.end()) {
-    return item->second;
-  }
-  static std::string empty_string;
-  return empty_string;
 }

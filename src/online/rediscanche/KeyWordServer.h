@@ -18,6 +18,7 @@
 #include "utils/base/SingleWord.h"
 #include "utils/splitword/SplitChinese.h"
 #include "utils/splitword/SplitEnglish.h"
+#include <sw/redis++/redis++.h>
 using json = nlohmann::json;
 
 struct SimilarityWord{
@@ -51,6 +52,7 @@ class KeyWordServer {
   std::shared_ptr<CandidateWord> m_en_candidateWord;
   std::shared_ptr<CandidateWord> m_cn_candidateWord;
   std::priority_queue<SimilarityWord> m_result; // 默认大顶堆
+  std::shared_ptr<sw::redis::Redis> m_redis;
 };
 
 

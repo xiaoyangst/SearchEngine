@@ -1,5 +1,6 @@
 #include <cmath>
 #include <fstream>
+#include <unordered_set>
 #include "WebPageServer.h"
 #include "utils/base/Log.h"
 using json = nlohmann::json;
@@ -8,13 +9,40 @@ bool WebPageServer::init() {
   std::string new_webpage_dict = Configure::getInstance()->get("new_webpage_dict").value();
   std::string new_webpage_offset = Configure::getInstance()->get("new_webpage_offset").value();
   std::string webpage_invert = Configure::getInstance()->get("webpage_invert").value();
+  std::string redis_ip = Configure::getInstance()->get("redis_ip").value();
+  std::string redis_port = Configure::getInstance()->get("redis_port").value();
 
   m_candidatePage = std::make_shared<CandidatePage>(webpage_invert, new_webpage_offset, new_webpage_dict);
-  m_candidatePage->preheat();
+  if (!m_candidatePage->preheat()) {
+    ERROR_LOG("candidatePage preheat failed");
+    return false;
+  }
+
+  sw::redis::ConnectionOptions connOpts;
+  connOpts.host = redis_ip;
+  connOpts.port = std::stoi(redis_port);
+  connOpts.socket_timeout = std::chrono::seconds(1);
+  m_redis = std::make_shared<sw::redis::Redis>(connOpts);
+
+  if (m_redis->ping() != "PONG") {
+    ERROR_LOG("redis connect failed");
+    return false;
+  }
+
   return true;
 }
 
 std::string WebPageServer::getWebPage(std::string &sentence) {
+  // 先走缓存
+
+  if (m_redis->exists(sentence)) {
+    std::cout << "keyword 走缓存" << std::endl;
+    std::unordered_set<std::string> re;
+    m_redis->smembers(sentence, std::inserter(re, re.begin()));
+    json data(re);
+    return data.dump();
+  }
+
   // 分词
   auto sig_word_vec = SingleWord::splitString(sentence);
   // 交集，得到候选页面
@@ -28,13 +56,16 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   json j_array;
   for (int i = 0; i < 10; ++i) {
     if (m_similar_pages.empty()) { break; }
-    j_array.emplace_back(m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id));
+    auto data = m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id); // 走磁盘
+    m_redis->sadd(sentence, data); // 记得插入到 redis，以便后续走缓存
+    j_array.emplace_back(data);
     m_similar_pages.pop();
   }
+  // std::cout<<"webpage 走磁盘"<<std::endl;
   return j_array.dump();
 }
 void WebPageServer::sortCandidatePage(PageWeight &sentence, CandMap &pages) {
-  for (const auto& page:pages) {
+  for (const auto &page : pages) {
     auto cosine_val = CosineAlgorithm::CosineSimilarity(sentence, page.second);
     m_similar_pages.push({page.first, cosine_val});
   }

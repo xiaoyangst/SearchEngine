@@ -16,5 +16,9 @@
   "new_webpage_dict": "data/new_webpage.dat",
   "new_webpage_offset": "data/new_webpage_offset.dat",
   "webpage_invert": "data/webpage_invert.dat",
-  "stop_word": "sources/project/dict/stop_words.utf8"
+  "stop_word": "sources/project/dict/stop_words.utf8",
+  "redis_ip": "127.0.0.1",
+  "redis_port": "6379",
+  "redis_pwd": "default",
+  "redis_user": "default"
 }

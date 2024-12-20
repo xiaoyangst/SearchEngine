@@ -47,3 +47,10 @@ class WordWeight : public noncopyable{
 };
 
 #endif //SEARCHENGINE_SRC_OFFLINE_WEBPAGE_WORDWEIGHT_H_
+
+/*
+ * TF：每个单词在文章中出现的次数
+ * DF：每个单词在所有文章中出现的次数
+ * IDF：log2(N/(DF+1) + 1)，N 表示文档的总数或网页库的文档数
+ * WEIGHT：单词出现的次数和对应的权重
+ */

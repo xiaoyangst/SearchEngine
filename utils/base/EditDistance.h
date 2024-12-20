@@ -10,7 +10,6 @@
 #ifndef SEARCHENGINE_SRC_ONLINE_SERVER_EDITDISTANCE_H_
 #define SEARCHENGINE_SRC_ONLINE_SERVER_EDITDISTANCE_H_
 #include <string>
-#include <gtest/gtest.h>
 class EditDistance {
  public:
   static int editDistance(const std::string &lhs, const std::string &rhs);
@@ -18,8 +17,6 @@ class EditDistance {
   static size_t nBytesCode(const char ch);
   static std::size_t length(const std::string &str);
   static int triple_min(const int &a, const int &b, const int &c);
- public:
-  FRIEND_TEST(EditDistanceTest,editDiatance);
 };
 
 #endif //SEARCHENGINE_SRC_ONLINE_SERVER_EDITDISTANCE_H_

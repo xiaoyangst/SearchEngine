@@ -31,6 +31,7 @@ bool InvertIndex::buildInvertIndex() {
 }
 
 
+
 bool InvertIndex::createInvertIndex() {
   std::ofstream ofs(m_index_path);
   if (!ofs.is_open()) {

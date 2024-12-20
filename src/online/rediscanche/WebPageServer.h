@@ -12,10 +12,12 @@
 #include <string>
 #include <memory>
 #include <queue>
+#include <istream>
 #include "CandidatePage.h"
 #include "utils/base/SingleWord.h"
 #include "utils/base/Configure.h"
 #include "CosineAlgorithm.h"
+#include <sw/redis++/redis++.h>
 #include "utils/base/json.hpp"
 struct SimilarityPage {
   int page_id;  // 页面 id
@@ -38,6 +40,7 @@ class WebPageServer {
   std::shared_ptr<CandidatePage> m_candidatePage;
   std::priority_queue<SimilarityPage> m_similar_pages;
   CandMap m_sentence_weight;
+  std::shared_ptr<sw::redis::Redis> m_redis;
  private:
 
 };

@@ -26,14 +26,10 @@ void WebPage::Parse() {
         const char *title = item->FirstChildElement("title") ? item->FirstChildElement("title")->GetText() : "";
         const char *link = item->FirstChildElement("link") ? item->FirstChildElement("link")->GetText() : "";
         const char *content = item->FirstChildElement("content") ? item->FirstChildElement("content")->GetText() : "";
-        const char *descriptionText = item->FirstChildElement("description") ? item->FirstChildElement("description")->GetText() : "";
+        const char *descriptionText =
+            item->FirstChildElement("description") ? item->FirstChildElement("description")->GetText() : "";
 
-        std::string m_title = title ? title : "";
-        std::string m_link = link ? link : "";
-        std::string m_content = content ? content : "";
-        std::string m_description = rinse(descriptionText ? descriptionText : "");
-
-        m_infos.emplace(docid++,WebPageInfo(m_title, m_link, m_description, m_content));
+        m_infos.emplace(docid++, WebPageInfo(title, link, descriptionText, content));
       }
     } else {
       std::cerr << "Failed to open file: " << entry.path() << std::endl;
@@ -66,7 +62,6 @@ std::string WebPage::rinse(const std::string &input) {
 
   return noHtml;
 }
-
 
 void WebPage::Generate() {
   std::ofstream file(m_dst, std::ios::out);
