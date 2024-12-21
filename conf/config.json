@@ -21,5 +21,6 @@
   "redis_port": "6379",
   "redis_pwd": "default",
   "redis_user": "default",
-  "redis_ttl": "3600"
+  "redis_ttl": "3600",
+  "lru_capacity": "10000"
 }

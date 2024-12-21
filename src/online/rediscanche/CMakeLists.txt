@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(BuildRedisCache)
 
 set(CMAKE_CXX_STANDARD 20)
-
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 aux_source_directory(. REDIS_SERVER_SRC_LIST)
 aux_source_directory(${CMAKE_SOURCE_DIR}/utils/base REDIS_BASE_SRC_LIST)

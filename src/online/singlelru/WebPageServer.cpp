@@ -1,5 +1,3 @@
-#include <cmath>
-#include <fstream>
 #include <unordered_set>
 #include "WebPageServer.h"
 #include "utils/base/Log.h"
@@ -9,25 +7,12 @@ bool WebPageServer::init() {
   std::string new_webpage_dict = Configure::getInstance()->get("new_webpage_dict").value();
   std::string new_webpage_offset = Configure::getInstance()->get("new_webpage_offset").value();
   std::string webpage_invert = Configure::getInstance()->get("webpage_invert").value();
-  std::string redis_ip = Configure::getInstance()->get("redis_ip").value();
-  std::string redis_port = Configure::getInstance()->get("redis_port").value();
-  std::string redis_ttl = Configure::getInstance()->get("redis_ttl").value();
-  m_redis_ttl = std::stoi(redis_ttl);
-
+  std::string lru_capacity = Configure::getInstance()->get("lru_capacity").value();
+  int lru_capacity_int = std::stoi(lru_capacity);
+  m_lru = std::make_unique<LRU>(lru_capacity_int);
   m_candidatePage = std::make_shared<CandidatePage>(webpage_invert, new_webpage_offset, new_webpage_dict);
   if (!m_candidatePage->preheat()) {
     ERROR_LOG("candidatePage preheat failed");
-    return false;
-  }
-
-  sw::redis::ConnectionOptions connOpts;
-  connOpts.host = redis_ip;
-  connOpts.port = std::stoi(redis_port);
-  connOpts.socket_timeout = std::chrono::seconds(1);
-  m_redis = std::make_shared<sw::redis::Redis>(connOpts);
-
-  if (m_redis->ping() != "PONG") {
-    ERROR_LOG("redis connect failed");
     return false;
   }
 
@@ -35,16 +20,14 @@ bool WebPageServer::init() {
 }
 
 std::string WebPageServer::getWebPage(std::string &sentence) {
-  // 先走缓存
-
-  if (m_redis->exists(sentence)) {
-    std::cout << "keyword 走缓存" << std::endl;
-    std::unordered_set<std::string> re;
-    m_redis->smembers(sentence, std::inserter(re, re.begin()));
-    json data(re);
-    return data.dump();
+  // 走缓存
+  std::unique_lock<std::mutex> uq_lock(m_mtx);
+  auto cache_data = m_lru->get(sentence);
+  if (cache_data != std::nullopt) {
+    //std::cout<<"webpage 走缓存"<<std::endl;
+    json j_array(cache_data.value());
+    return j_array.dump();
   }
-
   // 分词
   auto sig_word_vec = SingleWord::splitString(sentence);
   // 交集，得到候选页面
@@ -59,12 +42,11 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   for (int i = 0; i < 10; ++i) {
     if (m_similar_pages.empty()) { break; }
     auto data = m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id); // 走磁盘
+    m_lru->put(sentence, data);
     j_array.emplace_back(data);
-    m_redis->sadd(sentence, data); // 记得插入到 redis，以便后续走缓存
-    m_redis->expire(sentence,m_redis_ttl);  // 设置过期时间
     m_similar_pages.pop();
   }
-   std::cout<<"webpage 走磁盘"<<std::endl;
+  //std::cout<<"webpage 走磁盘"<<std::endl;
   return j_array.dump();
 }
 void WebPageServer::sortCandidatePage(PageWeight &sentence, CandMap &pages) {

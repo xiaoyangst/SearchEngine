@@ -1,7 +1,17 @@
 #include "WebPageProducer.h"
+#include <filesystem>
 int main() {
 
-    WebPageProducer web_page_producer;
-    web_page_producer.start();
-    return 0;
+  std::string data = "data";
+  std::string config = "config";
+  if (!std::filesystem::exists(data)) {
+    std::filesystem::create_directory(data);
+  }
+  if (!std::filesystem::exists(config)) {
+    std::filesystem::create_directory(config);
+  }
+
+  WebPageProducer web_page_producer;
+  web_page_producer.start();
+  return 0;
 }
