@@ -94,28 +94,15 @@ int main() {
 */
 #include <iostream>
 #include <queue>
-
+#include "list"
+#include "unordered_set"
 #include "utils/base/Configure.h"
 #include "utils/base/HvProtocol.h"
 int main() {
-  //Configure config;
-  //auto re = config.get("stop_word");
 
-  auto re = Configure::getInstance()->get("stop_word");
-  if (re == std::nullopt) {
-    std::cout << "null" << std::endl;
-  } else {
-    std::cout << *re << std::endl;
-  }
+  int num = 3;
 
-/*
-  const std::string message = "hello";
 
-  auto re = HvProtocol::packMessageAsString(message);
-  std::cout << "re = " << re << std::endl;
-  auto tmp = HvProtocol::unpackMessage(re);
-  std::cout << "tmp = " << tmp << std::endl;
-*/
   return 0;
 }
 

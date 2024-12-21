@@ -37,3 +37,6 @@
 cmake-build-debug/
 
 .idea/
+bin/
+log/
+data/

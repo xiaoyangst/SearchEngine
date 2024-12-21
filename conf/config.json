@@ -22,5 +22,7 @@
   "redis_pwd": "default",
   "redis_user": "default",
   "redis_ttl": "3600",
-  "lru_capacity": "10000"
+  "lru_capacity": "10000",
+  "keyword_server_num": "3",
+  "webpage_server_num": "3"
 }

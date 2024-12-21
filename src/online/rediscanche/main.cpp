@@ -2,7 +2,7 @@
 #include <filesystem>
 int main() {
   std::string data = "data";
-  std::string config = "config";
+  std::string config = "conf";
   std::string log = "log";
   if (!std::filesystem::exists(data)) {
     std::filesystem::create_directory(data);
