@@ -30,9 +30,8 @@ std::string KeyWordServer::getKeyWord(std::string &word) {
   std::unique_lock<std::mutex> uq_lock(m_mtx);
   auto cache_data = m_lru->get(word);
   if (cache_data != std::nullopt) {
-    std::cout<<"keyword 走缓存"<<std::endl;
-    json j_array(cache_data.value());
-    return j_array.dump();
+    std::cout << "keyword 走缓存" << std::endl;
+    return cache_data.value();
   }
   // 分词
 
@@ -47,11 +46,11 @@ std::string KeyWordServer::getKeyWord(std::string &word) {
   for (int i = 0; i < 10; ++i) {
     if (m_result.empty()) { break; }
     auto data = m_result.top().word;
-    m_lru->put(word, data);
     j_array.push_back(data);
     m_result.pop();
   }
-  std::cout<<"keyword 走磁盘"<<std::endl;
+  m_lru->put(word, j_array.dump());
+  std::cout << "keyword 走磁盘" << std::endl;
   return j_array.dump();
 }
 /*

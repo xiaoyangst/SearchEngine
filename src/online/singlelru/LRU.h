@@ -13,12 +13,12 @@
 #include <unordered_map>
 #include <unordered_set>
 class LRU {
-  using cacheList = std::list<std::pair<std::string, std::unordered_set<std::string>>>;
+  using cacheList = std::list<std::pair<std::string, std::string>>;
   using cacheMap = std::unordered_map<std::string, cacheList::iterator>;
  public:
-  LRU(unsigned int capacity);
-  void put(std::string key, std::string value);
-  std::optional<std::unordered_set<std::string>> get(std::string key);
+  explicit LRU(unsigned int capacity);
+  void put(const std::string& key, const std::string& value);
+  std::optional<std::string> get(const std::string& key);
  private:
   unsigned int m_capacity;
   cacheList m_cache;

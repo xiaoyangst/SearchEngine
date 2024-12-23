@@ -24,9 +24,8 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   std::unique_lock<std::mutex> uq_lock(m_mtx);
   auto cache_data = m_lru->get(sentence);
   if (cache_data != std::nullopt) {
-    //std::cout<<"webpage 走缓存"<<std::endl;
-    json j_array(cache_data.value());
-    return j_array.dump();
+    std::cout<<"webpage 走缓存"<<std::endl;
+    return cache_data.value();
   }
   // 分词
   auto sig_word_vec = SingleWord::splitString(sentence);
@@ -42,11 +41,11 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   for (int i = 0; i < 10; ++i) {
     if (m_similar_pages.empty()) { break; }
     auto data = m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id); // 走磁盘
-    m_lru->put(sentence, data);
     j_array.emplace_back(data);
     m_similar_pages.pop();
   }
-  //std::cout<<"webpage 走磁盘"<<std::endl;
+  m_lru->put(sentence, j_array.dump());
+  std::cout << "webpage 走磁盘" << std::endl;
   return j_array.dump();
 }
 void WebPageServer::sortCandidatePage(PageWeight &sentence, CandMap &pages) {
