@@ -29,5 +29,6 @@ void LRU::put(std::string key, std::string value) {
     m_map.erase(delItem.first);
   }
   m_cache.push_front({key, {value}});
+
   m_map[key] = m_cache.begin(); // 因为是在 头部插入，也就可以直接获取
 }

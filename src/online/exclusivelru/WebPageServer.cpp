@@ -47,13 +47,15 @@ std::string WebPageServer::getWebPage(std::string &sentence) {
   sortCandidatePage(sentence_weight, result);
   // 将 page 对应的网页信息打包（理论上获取前 10 个）
   json j_array;
+  std::set<std::string> target;
   for (int i = 0; i < 10; ++i) {
     if (m_similar_pages.empty()) { break; }
     auto data = m_candidatePage->getWebPageInfo(m_similar_pages.top().page_id); // 走磁盘
-    m_lru->put(sentence, data);
+    target.insert(data);
     j_array.emplace_back(data);
     m_similar_pages.pop();
   }
+  m_lru->put(sentence, target);
   std::cout << "webpage 走磁盘" << std::endl;
   return j_array.dump();
 }

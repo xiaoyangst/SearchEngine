@@ -32,7 +32,7 @@ bool CandidateWord::preheat() {
   }
 
   std::string dict_line;
-  static int index = 0;
+  int index = 0;
   while (getline(dict_ifs, dict_line)) {
     std::string word;
     unsigned int fre;

@@ -23,6 +23,7 @@ TcpServer::TcpServer(const std::string &ip, const int port, const int thread_num
   server_unpack_setting->length_field_coding = ENCODE_BY_BIG_ENDIAN;
   m_server.setUnpack(server_unpack_setting);
   m_server.setThreadNum(thread_num);
+
   m_server.loop()->setInterval(60000, [this](auto timer) {
     std::cout << "timer callback" << std::endl;
     synKeyword();
@@ -37,11 +38,11 @@ TcpServer::TcpServer(const std::string &ip, const int port, const int thread_num
   int lru_capacity_int = std::stoi(lru_capacity);
   m_Wlru = std::make_unique<LRU>(lru_capacity_int);
   m_Klru = std::make_unique<LRU>(lru_capacity_int);
-  for (int i = 0; i <= m_k_num; ++i) {
+  for (int i = 0; i < m_k_num; ++i) {
     auto keyword_server = std::make_shared<KeyWordServer>();
     m_keyword_server.push_back(keyword_server);
   }
-  for (int i = 0; i <= m_w_num; ++i) {
+  for (int i = 0; i < m_w_num; ++i) {
     auto webpage_server = std::make_shared<WebPageServer>();
     m_web_page_server.push_back(webpage_server);
   }
@@ -112,43 +113,67 @@ void TcpServer::onMessage(const hv::SocketChannelPtr &conn, hv::Buffer *buf) {
 
 std::shared_ptr<KeyWordServer> TcpServer::getKeywordServer() {
   std::lock_guard<std::mutex> lock(m_KMtx);
-  auto keyword = m_keyword_server[m_k_num];
-  m_k_num = (m_k_num + 1) % m_keyword_server.size();
-  return keyword;
+  static unsigned int s_index = 0;
+  unsigned int index = s_index++ % m_k_num;
+  return m_keyword_server[index];
 }
 
 std::shared_ptr<WebPageServer> TcpServer::getWebPageServer() {
   std::lock_guard<std::mutex> lock(m_WMtx);
-  auto webpage = m_web_page_server[m_w_num];
-  m_w_num = (m_w_num + 1) % m_web_page_server.size();
-  return webpage;
+  static unsigned int s_index = 0;
+  unsigned int index = s_index++ % m_w_num;
+  return m_web_page_server[index];
 }
 
 void TcpServer::synWebPage() {
   std::lock_guard<std::mutex> lock(m_WMtx);
+  m_Wlru->clearAll();
   // 收集 pending
-  std::cout << "开始收集" << std::endl;
-  for (const auto page : m_web_page_server) {
-    auto re = page->getPending();
-    for (auto item : re) {
-      for (auto k : item.second) {
-        m_Wlru->put(item.first, k);
+  for (const auto &webpage : m_web_page_server) {
+    std::cout << "开始收集" << std::endl;
+    for (const auto &item : webpage->getPending()) {
+      for (const auto &page_set : item) {
+        m_Wlru->put(page_set.first, page_set.second);
       }
     }
+    webpage->m_lru->clearPending();
   }
-  std::cout << "开始同步" << std::endl;
+
   // 同步 LRU
-  for (const auto page : m_web_page_server) {
-    auto re = m_Wlru->getCache(); // 崩掉了
-    for (auto item : re) {
-      for (auto k : item.second) {
-        page->m_lru->put(item.first, k);
+  for (const auto &webpage : m_web_page_server) {
+    std::cout << "开始同步" << std::endl;
+    for (const auto &item : m_Wlru->getCache()) {
+      for (const auto &word_set : item) {
+        webpage->m_lru->put(word_set.first, word_set.second);
       }
     }
   }
-  std::cout << "sync mtx stop" << std::endl;
 }
 
 void TcpServer::synKeyword() {
+  std::lock_guard<std::mutex> lock(m_KMtx);
+  std::cout << "tid = " << std::this_thread::get_id() << std::endl;
 
+  m_Klru->clearAll();
+
+  // 收集 pending
+  for (const auto &keyword : m_keyword_server) {
+    std::cout << "开始收集" << std::endl;
+    for (const auto &item : keyword->getPending()) {
+      for (const auto &word_set : item) {
+        m_Klru->put(word_set.first, word_set.second);
+      }
+    }
+    keyword->m_lru->clearPending();
+  }
+
+  // 同步 LRU
+  for (const auto &keyword : m_keyword_server) {
+    std::cout << "开始同步" << std::endl;
+    for (const auto &item : m_Klru->getCache()) {
+      for (const auto &word_set : item) {
+        keyword->m_lru->put(word_set.first, word_set.second);
+      }
+    }
+  }
 }

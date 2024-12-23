@@ -12,16 +12,19 @@
 #include <list>
 #include <unordered_map>
 #include <unordered_set>
-using cacheList = std::list<std::pair<std::string, std::unordered_set<std::string>>>;
+#include <set>
+using cacheList = std::list<std::unordered_map<std::string, std::set<std::string>>>;
 using cacheMap = std::unordered_map<std::string, cacheList::iterator>;
 class LRU {
  public:
-  LRU(unsigned int capacity);
-  void put(std::string key, std::string value);
-  std::optional<std::unordered_set<std::string>> get(std::string key);
+  explicit LRU(unsigned int capacity);
+  void put(const std::string& key,const std::set<std::string>& value);
+  std::optional<std::set<std::string>> get(const std::string& key);
   cacheList getPending(); // cacheManager 需要
   cacheList getCache();
   void clearPending();
+ public:
+  void clearAll();
  private:
   unsigned int m_capacity;
   cacheList m_cache;

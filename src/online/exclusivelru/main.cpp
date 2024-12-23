@@ -15,7 +15,7 @@ int main() {
     std::filesystem::create_directory(log);
   }
 
-  TcpServer tcp_server("127.0.0.1", 8080, 4);
+  TcpServer tcp_server("127.0.0.1", 8080, 3);
   tcp_server.start();
   return 0;
 }

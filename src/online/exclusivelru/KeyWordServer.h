@@ -43,18 +43,22 @@ struct SimilarityWord{
   }
 
 };
+class TcpServer;
 class KeyWordServer {
+  friend class TcpServer;
  public:
   explicit KeyWordServer();
   bool init();
   std::string getKeyWord(std::string& word); // 放入一个 json 的array中
+  cacheList getPending();
+  void clearPending();
  private:
   void sortCandidateWord(CandVec & words,const std::string& key_word);
  private:
   std::shared_ptr<CandidateWord> m_en_candidateWord;
   std::shared_ptr<CandidateWord> m_cn_candidateWord;
   std::priority_queue<SimilarityWord> m_result; // 默认大顶堆
-  std::unique_ptr<LRU> m_lru;
+  std::shared_ptr<LRU> m_lru;
   std::mutex m_mtx;
 };
 

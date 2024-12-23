@@ -35,30 +35,33 @@ bool KeyWordServer::init() {
 
 std::string KeyWordServer::getKeyWord(std::string &word) {
   // 走缓存
-  std::unique_lock<std::mutex> uq_lock(m_mtx);
+  std::lock_guard<std::mutex> lock_guard(m_mtx);
   auto cache_data = m_lru->get(word);
+  std::cout << "size = " << cache_data->size() << std::endl;
   if (cache_data != std::nullopt) {
     std::cout << "keyword 走缓存" << std::endl;
     json j_array(cache_data.value());
     return j_array.dump();
   }
   // 分词
-
   auto sig_word_vec = SingleWord::splitString(word);
   CandVec result;
   m_cn_candidateWord->CandidateWords(sig_word_vec, result);
   m_en_candidateWord->CandidateWords(sig_word_vec, result);
   // 排序
   sortCandidateWord(result, word);
+
+  std::set<std::string> target;
   // 理论上取前面十个
   json j_array;
   for (int i = 0; i < 10; ++i) {
     if (m_result.empty()) { break; }
     auto data = m_result.top().word;
-    m_lru->put(word, data);
+    target.insert(data);
     j_array.push_back(data);
     m_result.pop();
   }
+  m_lru->put(word,target);  // 插入缓存
   std::cout << "keyword 走磁盘" << std::endl;
   return j_array.dump();
 }
@@ -78,6 +81,12 @@ void KeyWordServer::sortCandidateWord(CandVec &words, const std::string &key_wor
     };
     m_result.push(sim_word);
   }
+}
+cacheList KeyWordServer::getPending() {
+  return m_lru->getPending();
+}
+void KeyWordServer::clearPending() {
+  m_lru->clearPending();
 }
 
 
