@@ -22,7 +22,6 @@ class TcpServer : public Singleton<TcpServer> {
  public:
   TcpServer(const std::string &ip, int port, int thread_num);
   ~TcpServer();
-
   void start();
  private:
   void onConnection(const hv::SocketChannelPtr &conn);

@@ -1,5 +1,5 @@
 #add_subdirectory(server)
 #add_subdirectory(rediscanche)
 add_subdirectory(singlelru)
-#add_subdirectory(exclusivelru)
+add_subdirectory(exclusivelru)
 add_subdirectory(client)
